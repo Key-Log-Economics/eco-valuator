@@ -184,12 +184,11 @@ class ESV_dataset:
         query = """ SELECT esv_estimates.lulc_value AS LULC_code,
                            lulc_legend.description LULC_Description,
                            ROUND(area, 2) AS land_cover_area,
-                           service_names.service_name AS Ecosystem_Service_Name,
+                           esv_estimates.service_name AS Ecosystem_Service_Name,
                            ROUND(estimate_min * area) AS Minimum_Value_Estimate,
                            ROUND(estimate_max * area) AS Maximum_Value_Estimate,
                            ROUND(estimate_avg * area) AS Average_Value_Estimate
                     FROM esv_estimates JOIN raster_area_summary ON esv_estimates.lulc_value = raster_area_summary.lulc_value
-                          JOIN service_names ON esv_estimates.service_id = service_names.service_id
                           JOIN (SELECT * FROM lulc_legend WHERE source = ?) AS lulc_legend ON esv_estimates.lulc_value = lulc_legend.value
                     WHERE esv_estimates.lulc_source = ?"""
 
@@ -218,7 +217,7 @@ class ESV_dataset:
         """
 
         query = f"""SELECT lulc_value, estimate_{summary_type}
-        FROM esv_estimates JOIN service_names ON esv_estimates.service_id = service_names.service_id
+        FROM esv_estimates
         WHERE lulc_source = (?) AND service_name = (?)"""
 
 
@@ -250,7 +249,7 @@ class ESV_dataset:
 
     def get_ecosystem_service_names(self):
         """Returns a list of ecosystem services available in the ESV data"""
-        result = self.query("""SELECT service_name FROM service_names""")
+        result = self.query("""SELECT DISTINCT service_name FROM esv_estimates""")
         services = [r[0] for r in result]
         return(services)
     

@@ -141,7 +141,7 @@ class MapTheValueOfIndividualEcosystemServices(QgsProcessingAlgorithm):
 
         #Labeling output layer in legend   
         if isinstance(parameters['OUTPUT_RASTER'], QgsProcessingOutputLayerDefinition):
-            if input_esv_field != 'protection from extreme events':         #'protection from exteme events' is too long for legend in step 3 so it is shortened here
+            if input_esv_field.lower() != 'protection from extreme events':         #'protection from exteme events' is too long for legend in step 3 so it is shortened here
                 if input_esv_stat == 'min':
                     setattr(parameters['OUTPUT_RASTER'], 'destinationName', f'Minimum Value - {input_esv_field}')
                 elif input_esv_stat == 'max':
